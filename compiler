@@ -1,0 +1,58 @@
+import math, random, marshal
+
+def fixed_length_password(length, point):
+    if length <= point: return length
+    else: return length % point or point
+
+def generate_characters_from_password(password, length):
+    fixed = []
+
+    for character in list( (password * length)[:length] ):
+        session_seed = ord(character) * 678
+        random_session = random.Random(session_seed)
+        random_number = random_session.randint(457, 875)
+        character = chr(random_number)
+
+        fixed.append(character)
+
+    return fixed
+
+def encrypt(string, password):
+    characters = []
+    generated_characters = generate_characters_from_password(password, 7)
+    password_length = len(password)
+    reversed_password_first_char_ascii = ord(password[::-1][0])
+
+    for i, char in enumerate(string):
+        string_character_ascii = ord(char)
+        password_character_ascii = ord(password[fixed_length_password(i + 1, password_length) - 1])
+
+        encrypted_char = chr(string_character_ascii + password_character_ascii + reversed_password_first_char_ascii)
+        characters.append(encrypted_char)
+
+    obfuscated_characters = ''.join(
+        char + (random.choice(generated_characters) if random.random() > 0.5 else '')
+        for char in characters
+    )
+
+    scrambled_hexes = ''.join(
+        hex(ord(char))[2:] + random.choice('ghijklmno')
+        for char in obfuscated_characters
+    )
+
+    scrambled_hexes = scrambled_hexes[:-1]
+    final_string = scrambled_hexes.upper()[::-1] + random.choice('pqrstuv').upper() + str(random.randint(137, 975))
+
+    return final_string
+
+def serialize_code_object(code_obj):
+    return marshal.dumps(code_obj).hex()
+
+def function():
+    exec("""
+
+^^^
+
+""")
+
+print(encrypt(serialize_code_object(function.__code__), '***'))
