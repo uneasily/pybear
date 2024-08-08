@@ -1,4 +1,7 @@
-import math, random, marshal
+import math, random, marshal, pyperclip
+
+def copy_to_clipboard(text):
+    pyperclip.copy(text)
 
 def fixed_length_password(length, point):
     if length <= point: return length
@@ -55,4 +58,4 @@ def function():
 
 """)
 
-print(encrypt(serialize_code_object(function.__code__), '***'))
+copy_to_clipboard(encrypt(serialize_code_object(function.__code__), '***'))
